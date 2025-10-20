@@ -1,0 +1,8 @@
+{% extends "portada/base.html" %}
+
+{% block title %}Portada{% endblock %}
+
+{% block content %}
+<h1>Bienvenido a la portada</h1>
+<p>Aquí puedes entrar al menú de <a href="{% url 'inmuebles:lista' %}">Inmuebles</a>.</p>
+{% endblock %}
