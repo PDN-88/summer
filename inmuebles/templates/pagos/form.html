@@ -1,15 +1,17 @@
 {% extends "portada/base.html" %}
 {% block title %}Pago{% endblock %}
 {% block content %}
-<h2>{% if view.object %}Editar pago{% else %}Nuevo pago{% endif %}</h2>
-<form method="post">
-  {% csrf_token %}
-  <div style="display:grid; grid-template-columns: repeat(2, minmax(240px,1fr)); gap: 1rem;">
-    {{ form.as_p }}
-  </div>
-  <p>
-    <button type="submit">Guardar</button>
-    <a class="button" href="{% url 'pagos:lista' %}">Cancelar</a>
-  </p>
-</form>
+<section class="card">
+  <h2>{% if view.object %}Editar pago{% else %}Nuevo pago{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div style="display:grid; grid-template-columns: repeat(2, minmax(240px,1fr)); gap: 1rem;">
+      {{ form.as_p }}
+    </div>
+    <p>
+      <button type="submit">Guardar</button>
+      <a class="button" href="{% url 'pagos:lista' %}">Cancelar</a>
+    </p>
+  </form>
+</section>
 {% endblock %}

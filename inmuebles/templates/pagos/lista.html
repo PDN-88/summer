@@ -1,73 +1,86 @@
 {% extends "portada/base.html" %}
 {% block title %}Pagos{% endblock %}
 {% block content %}
-<h2>Pagos</h2>
-<p>
-  <a class="button" href="{% url 'pagos:nuevo' %}{% if inmueble %}?inmueble={{ inmueble }}{% endif %}">+ Nuevo</a>
-</p>
-
-<form method="get" style="display:grid; grid-template-columns: repeat(6, minmax(160px,1fr)); gap:.6rem; align-items:end; margin-bottom:1rem;">
-  <label>Descripción
-    <input type="text" name="q" value="{{ q }}">
-  </label>
-
-  <label>Inmueble (ID)
-    <input type="number" name="inmueble" value="{{ inmueble }}" placeholder="ID">
-  </label>
-
-  <label>Dirección
-    <input type="text" name="inmueble_q" value="{{ inmueble_q }}" placeholder="Buscar por dirección">
-  </label>
-
-  <label>Tipo
-    <select name="tipo">
-      <option value="">(Todos)</option>
+<div class="toolbar">
+  <h2 style="margin:.5rem 0;">Pagos</h2>
+  <div style="display:flex; gap:.5rem; align-items:center;">
+    <select id="tipo-rapido" style="min-width:200px;">
+      <option value="">Tipo rápido…</option>
       {% for t in TIPOS %}
-        <option value="{{ t.id }}" {% if tipo == t.id|stringformat:"s" %}selected{% endif %}>{{ t.nombre }}</option>
+        <option value="{{ t.id }}">{{ t.nombre }}</option>
       {% endfor %}
     </select>
-  </label>
-
-  <label>¿Pagado?
-    <select name="pagado">
-      <option value="">(Todos)</option>
-      <option value="si" {% if pagado == 'si' %}selected{% endif %}>Sí</option>
-      <option value="no" {% if pagado == 'no' %}selected{% endif %}>No</option>
-    </select>
-  </label>
-
-  <label>¿Quién paga?
-    <select name="quien">
-      <option value="">(Todos)</option>
-      {% for value,label in QUIEN_CHOICES %}
-        <option value="{{ value }}" {% if quien == value %}selected{% endif %}>{{ label }}</option>
-      {% endfor %}
-    </select>
-  </label>
-
-  <label>Desde
-    <input type="date" name="desde" value="{{ desde }}">
-  </label>
-  <label>Hasta
-    <input type="date" name="hasta" value="{{ hasta }}">
-  </label>
-
-  <label>Orden
-    <select name="orden">
-      <option value="-fecha" {% if orden == '-fecha' %}selected{% endif %}>Fecha ↓</option>
-      <option value="fecha"  {% if orden == 'fecha' %}selected{% endif %}>Fecha ↑</option>
-      <option value="-total" {% if orden == '-total' %}selected{% endif %}>Importe ↓</option>
-      <option value="total"  {% if orden == 'total' %}selected{% endif %}>Importe ↑</option>
-    </select>
-  </label>
-
-  <div>
-    <button type="submit">Filtrar</button>
-    <a class="button" href="{% url 'pagos:lista' %}">Limpiar</a>
+    <a id="nuevo-rapido" class="button" href="{% url 'pagos:nuevo' %}{% if inmueble %}?inmueble={{ inmueble }}{% endif %}">+ Nuevo</a>
   </div>
-</form>
+</div>
 
-<p><strong>Resumen:</strong> Total listado: {{ total_listado }} € · Pagado: {{ total_pagado }} € · Pendiente: {{ total_pendiente }} €</p>
+<section class="filters" style="margin:.8rem 0 1rem;">
+  <details {% if q or tipo or inmueble or inmueble_q or pagado or quien or desde or hasta %}open{% endif %}>
+    <summary>Filtros</summary>
+    <form method="get" style="display:grid; grid-template-columns: repeat(6, minmax(160px,1fr)); gap:.6rem; align-items:end; margin-top:.6rem;">
+      <label>Descripción
+        <input type="text" name="q" value="{{ q }}">
+      </label>
+
+      <label>Inmueble (ID)
+        <input type="number" name="inmueble" value="{{ inmueble }}" placeholder="ID">
+      </label>
+
+      <label>Dirección
+        <input type="text" name="inmueble_q" value="{{ inmueble_q }}" placeholder="Buscar por dirección">
+      </label>
+
+      <label>Tipo
+        <select name="tipo">
+          <option value="">(Todos)</option>
+          {% for t in TIPOS %}
+            <option value="{{ t.id }}" {% if tipo == t.id|stringformat:"s" %}selected{% endif %}>{{ t.nombre }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>¿Pagado?
+        <select name="pagado">
+          <option value="">(Todos)</option>
+          <option value="si" {% if pagado == 'si' %}selected{% endif %}>Sí</option>
+          <option value="no" {% if pagado == 'no' %}selected{% endif %}>No</option>
+        </select>
+      </label>
+
+      <label>¿Quién paga?
+        <select name="quien">
+          <option value="">(Todos)</option>
+          {% for value,label in QUIEN_CHOICES %}
+            <option value="{{ value }}" {% if quien == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>Desde
+        <input type="date" name="desde" value="{{ desde }}">
+      </label>
+      <label>Hasta
+        <input type="date" name="hasta" value="{{ hasta }}">
+      </label>
+
+      <label>Orden
+        <select name="orden">
+          <option value="-fecha" {% if orden == '-fecha' %}selected{% endif %}>Fecha ↓</option>
+          <option value="fecha"  {% if orden == 'fecha' %}selected{% endif %}>Fecha ↑</option>
+          <option value="-total" {% if orden == '-total' %}selected{% endif %}>Importe ↓</option>
+          <option value="total"  {% if orden == 'total' %}selected{% endif %}>Importe ↑</option>
+        </select>
+      </label>
+
+      <div>
+        <button type="submit">Filtrar</button>
+        <a class="button" href="{% url 'pagos:lista' %}">Limpiar</a>
+      </div>
+    </form>
+  </details>
+</section>
+
+<p><strong>Resumen:</strong> Total listado: {{ total_listado|floatformat:"2" }} € · Pagado: {{ total_pagado|floatformat:"2" }} € · Pendiente: {{ total_pendiente|floatformat:"2" }} €</p>
 
 <table>
   <thead>
@@ -89,9 +102,9 @@
       <td>{{ p.inmueble.direccion }}</td>
       <td>{{ p.tipo.nombre }}</td>
       <td>{{ p.descripcion|default:"—" }}</td>
-      <td>{{ p.total }} €</td>
+      <td>{{ p.total|floatformat:"2" }} €</td>
       <td>{{ p.get_quien_paga_display }}</td>
-      <td>{% if p.pagado %}<span style="color: #0a0;">Pagado</span>{% else %}<span style="color:#a00;">Pendiente</span>{% endif %}</td>
+      <td>{% if p.pagado %}<span class="pill green">Pagado</span>{% else %}<span class="pill red">Pendiente</span>{% endif %}</td>
       <td>
         <form method="post" action="{% url 'pagos:toggle' p.id %}" style="display:inline;">{% csrf_token %}
           <input type="hidden" name="next" value="{% if qs_base %}?{{ qs_base }}{% endif %}">
@@ -102,7 +115,12 @@
       </td>
     </tr>
     {% empty %}
-    <tr><td colspan="8">Sin resultados</td></tr>
+    <tr><td colspan="8">
+      <div class="card">
+        <h3>Sin resultados</h3>
+        <p>No hay pagos para los filtros seleccionados.</p>
+      </div>
+    </td></tr>
     {% endfor %}
   </tbody>
 </table>
@@ -118,5 +136,16 @@
   {% endif %}
 </nav>
 {% endif %}
+
+<script>
+  const select = document.getElementById('tipo-rapido');
+  const link = document.getElementById('nuevo-rapido');
+  const base = link.getAttribute('href');
+  select?.addEventListener('change', () => {
+    const tipo = select.value;
+    const sep = base.includes('?') ? '&' : '?';
+    link.setAttribute('href', tipo ? `${base}${sep}tipo=${tipo}` : base);
+  });
+</script>
 
 {% endblock %}

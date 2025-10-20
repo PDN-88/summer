@@ -1,15 +1,17 @@
 {% extends "portada/base.html" %}
 {% block title %}Inmueble{% endblock %}
 {% block content %}
-<h2>{{ view.object|default_if_none:"Nuevo inmueble" }}</h2>
-<form method="post">
-  {% csrf_token %}
-  <div style="display:grid; grid-template-columns: repeat(2, minmax(240px,1fr)); gap: 1rem;">
-    {{ form.as_p }}
-  </div>
-  <p>
-    <button type="submit">Guardar</button>
-    <a class="button" href="{% url 'inmuebles:lista' %}">Cancelar</a>
-  </p>
-</form>
+<section class="card">
+  <h2>{{ view.object|default_if_none:"Nuevo inmueble" }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div style="display:grid; grid-template-columns: repeat(2, minmax(240px,1fr)); gap: 1rem;">
+      {{ form.as_p }}
+    </div>
+    <p>
+      <button type="submit">Guardar</button>
+      <a class="button" href="{% url 'inmuebles:lista' %}">Cancelar</a>
+    </p>
+  </form>
+</section>
 {% endblock %}

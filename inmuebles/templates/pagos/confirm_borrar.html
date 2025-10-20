@@ -1,10 +1,12 @@
 {% extends "portada/base.html" %}
 {% block title %}Borrar pago{% endblock %}
 {% block content %}
-<h2>¿Seguro que quieres borrar este pago?</h2>
-<p><strong>{{ object }}</strong></p>
-<form method="post">{% csrf_token %}
-  <button type="submit">Sí, borrar</button>
-  <a class="button" href="{% url 'pagos:lista' %}">Cancelar</a>
-</form>
+<section class="card" style="max-width:720px; margin:1rem auto;">
+  <h2>¿Seguro que quieres borrar este pago?</h2>
+  <p><strong>{{ object }}</strong></p>
+  <form method="post">{% csrf_token %}
+    <button type="submit">Sí, borrar</button>
+    <a class="button" href="{% url 'pagos:lista' %}">Cancelar</a>
+  </form>
+</section>
 {% endblock %}
