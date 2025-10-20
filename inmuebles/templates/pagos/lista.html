@@ -1,0 +1,122 @@
+{% extends "portada/base.html" %}
+{% block title %}Pagos{% endblock %}
+{% block content %}
+<h2>Pagos</h2>
+<p>
+  <a class="button" href="{% url 'pagos:nuevo' %}{% if inmueble %}?inmueble={{ inmueble }}{% endif %}">+ Nuevo</a>
+</p>
+
+<form method="get" style="display:grid; grid-template-columns: repeat(6, minmax(160px,1fr)); gap:.6rem; align-items:end; margin-bottom:1rem;">
+  <label>Descripción
+    <input type="text" name="q" value="{{ q }}">
+  </label>
+
+  <label>Inmueble (ID)
+    <input type="number" name="inmueble" value="{{ inmueble }}" placeholder="ID">
+  </label>
+
+  <label>Dirección
+    <input type="text" name="inmueble_q" value="{{ inmueble_q }}" placeholder="Buscar por dirección">
+  </label>
+
+  <label>Tipo
+    <select name="tipo">
+      <option value="">(Todos)</option>
+      {% for t in TIPOS %}
+        <option value="{{ t.id }}" {% if tipo == t.id|stringformat:"s" %}selected{% endif %}>{{ t.nombre }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>¿Pagado?
+    <select name="pagado">
+      <option value="">(Todos)</option>
+      <option value="si" {% if pagado == 'si' %}selected{% endif %}>Sí</option>
+      <option value="no" {% if pagado == 'no' %}selected{% endif %}>No</option>
+    </select>
+  </label>
+
+  <label>¿Quién paga?
+    <select name="quien">
+      <option value="">(Todos)</option>
+      {% for value,label in QUIEN_CHOICES %}
+        <option value="{{ value }}" {% if quien == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Desde
+    <input type="date" name="desde" value="{{ desde }}">
+  </label>
+  <label>Hasta
+    <input type="date" name="hasta" value="{{ hasta }}">
+  </label>
+
+  <label>Orden
+    <select name="orden">
+      <option value="-fecha" {% if orden == '-fecha' %}selected{% endif %}>Fecha ↓</option>
+      <option value="fecha"  {% if orden == 'fecha' %}selected{% endif %}>Fecha ↑</option>
+      <option value="-total" {% if orden == '-total' %}selected{% endif %}>Importe ↓</option>
+      <option value="total"  {% if orden == 'total' %}selected{% endif %}>Importe ↑</option>
+    </select>
+  </label>
+
+  <div>
+    <button type="submit">Filtrar</button>
+    <a class="button" href="{% url 'pagos:lista' %}">Limpiar</a>
+  </div>
+</form>
+
+<p><strong>Resumen:</strong> Total listado: {{ total_listado }} € · Pagado: {{ total_pagado }} € · Pendiente: {{ total_pendiente }} €</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Inmueble</th>
+      <th>Tipo</th>
+      <th>Descripción</th>
+      <th>Total</th>
+      <th>Quién paga</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in object_list %}
+    <tr>
+      <td>{{ p.fecha }}</td>
+      <td>{{ p.inmueble.direccion }}</td>
+      <td>{{ p.tipo.nombre }}</td>
+      <td>{{ p.descripcion|default:"—" }}</td>
+      <td>{{ p.total }} €</td>
+      <td>{{ p.get_quien_paga_display }}</td>
+      <td>{% if p.pagado %}<span style="color: #0a0;">Pagado</span>{% else %}<span style="color:#a00;">Pendiente</span>{% endif %}</td>
+      <td>
+        <form method="post" action="{% url 'pagos:toggle' p.id %}" style="display:inline;">{% csrf_token %}
+          <input type="hidden" name="next" value="{% if qs_base %}?{{ qs_base }}{% endif %}">
+          <button type="submit">Marcar {{ p.pagado|yesno:"pendiente,pagado" }}</button>
+        </form>
+        | <a href="{% url 'pagos:editar' p.id %}">Editar</a>
+        | <a href="{% url 'pagos:borrar' p.id %}">Borrar</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8">Sin resultados</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if is_paginated %}
+<nav style="margin-top:1rem; display:flex; gap:.8rem; align-items:center;">
+  {% if page_obj.has_previous %}
+    <a href="?{% if qs_base %}{{ qs_base }}&{% endif %}page={{ page_obj.previous_page_number }}">← Anterior</a>
+  {% endif %}
+  <span>Página {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?{% if qs_base %}{{ qs_base }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente →</a>
+  {% endif %}
+</nav>
+{% endif %}
+
+{% endblock %}

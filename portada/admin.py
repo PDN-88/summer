@@ -8,7 +8,6 @@ from .models import Inmueble, Propietario, Inquilino, Contrato, Pago, TipoPago
 #admin.site.register(Inquilino)
 #admin.site.register(Contrato)
 #admin.site.register(Pago)
-admin.site.register(TipoPago)
 
 #Editamos menu admin
 
@@ -56,6 +55,7 @@ class ContratoAdmin(admin.ModelAdmin):
         return obj.inmueble.propietario.nombre if obj.inmueble and obj.inmueble.propietario else "-"
     get_propietario.short_description = "Propietario"
 
+@admin.register(TipoPago)
 class TipoPagoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'quien_por_defecto', 'activo', 'actualizado_en')
     list_filter = ('activo', 'quien_por_defecto')

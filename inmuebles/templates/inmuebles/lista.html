@@ -28,6 +28,14 @@
     <input type="text" name="prop" value="{{ prop }}" placeholder="Nombre propietario">
   </label>
 
+  <label>Alquilado
+    <select name="alquilado">
+      <option value="">(Todos)</option>
+      <option value="si" {% if alquilado == 'si' %}selected{% endif %}>Sí</option>
+      <option value="no" {% if alquilado == 'no' %}selected{% endif %}>No</option>
+    </select>
+  </label>
+
   <label>Planta
     <input type="text" name="planta" value="{{ planta }}" placeholder="1, B, Ent...">
   </label>
@@ -73,6 +81,7 @@
       <th>Puerta</th>
       <th>m²</th>
       <th>Hab.</th>
+      <th>Alquilado</th>
       <th>Propietario</th>
       <th>Acciones</th>
     </tr>
@@ -87,19 +96,16 @@
       <td>{{ i.puerta|default:"—" }}</td>
       <td>{{ i.metros }}</td>
       <td>{{ i.habitaciones|default:"—" }}</td>
+      <td>{% if i.alquilado %}Sí{% else %}No{% endif %}</td>
       <td>{{ i.propietario }}</td>
       <td>
-        {% if perms.portada.change_inmueble %}
-          <a href="{% url 'inmuebles:editar' i.id %}">Editar</a>
-        {% endif %}
-        {% if perms.portada.delete_inmueble %}
-          {% if perms.portada.change_inmueble %} | {% endif %}
-          <a href="{% url 'inmuebles:borrar' i.id %}">Borrar</a>
-        {% endif %}
+        <a href="{% url 'pagos:lista' %}?inmueble={{ i.id }}">Pagos</a>
+        {% if perms.portada.change_inmueble %} | <a href="{% url 'inmuebles:editar' i.id %}">Editar</a>{% endif %}
+        {% if perms.portada.delete_inmueble %} | <a href="{% url 'inmuebles:borrar' i.id %}">Borrar</a>{% endif %}
       </td>
     </tr>
     {% empty %}
-    <tr><td colspan="9">Sin resultados</td></tr>
+    <tr><td colspan="10">Sin resultados</td></tr>
     {% endfor %}
   </tbody>
 </table>

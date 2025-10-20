@@ -6,6 +6,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('portada.urls')),
     path('inmuebles/', include('inmuebles.urls')),
+    path('pagos/', include('inmuebles.pagos_urls')),
     path('accounts/', include('django.contrib.auth.urls')),  # login
     path('accounts/login/',  auth_views.LoginView.as_view(),  name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
