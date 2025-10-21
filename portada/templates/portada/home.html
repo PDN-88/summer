@@ -1,10 +1,28 @@
 {% extends "portada/base.html" %}
 {% block title %}Portada{% endblock %}
 {% block content %}
-<h2>Menú</h2>
-<ul>
-  <li><a href="/inmuebles/">Consultar inmuebles</a></li>
-  <li><a href="/inmuebles/nuevo/">Añadir inmueble</a></li>
-
-</ul>
-{% endblock %}
+<section class="cards">
+  <article class="card">
+    <h3>Inmuebles</h3>
+    <p>Consulta, filtra y gestiona tu cartera de pisos, locales, garajes y trasteros.</p>
+    <p>
+      <a class="button" href="/inmuebles/">Ver inmuebles</a>
+      <a class="button" href="/inmuebles/nuevo/">+ Añadir</a>
+    </p>
+  </article>
+  <article class="card">
+    <h3>Pagos y gastos</h3>
+    <p>Registra IBI, agua, reformas y cualquier coste asociado al inmueble.</p>
+    <p>
+      <a class="button" href="/pagos/">Ir a pagos</a>
+    </p>
+  </article>
+  <article class="card">
+    <h3>Consejos de uso</h3>
+    <ul>
+      <li>Usa los filtros para encontrar rápido.</li>
+      <li>Desde la lista de inmuebles accede a los pagos de cada uno.</li>
+      <li>Marca los pagos como pagados con un clic.</li>
+    </ul>
+  </article>
+</section>

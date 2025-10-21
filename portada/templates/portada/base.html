@@ -1,26 +1,65 @@
 <!doctype html>
-<html>
+<html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}App Inmobiliaria{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Gestor Inmobiliario{% endblock %}</title>
   <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <style>
+    :root{
+      --accent-hue: 210; /* azul */
+      --border-color: #e5e7eb;
+      --surface: #f8fafc;
+    }
+    header{ position: sticky; top: 0; z-index: 5; background: white; }
+    .container{ max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
+    nav a{ margin-right:.4rem; }
+    nav a.active{ font-weight:700; text-decoration: underline; }
+    .pill{ display:inline-block; padding:.15rem .5rem; border-radius: 999px; font-size:.8rem; background:#eef; color:#225; }
+    .pill.red{ background:#fee; color:#722; }
+    .pill.green{ background:#efe; color:#262; }
+    .toolbar{ display:flex; gap:.5rem; align-items:center; justify-content:space-between; flex-wrap: wrap; }
+    .filters{ border:1px solid var(--border-color); border-radius:.5rem; padding: .8rem; background: var(--surface); }
+    .filters details{ margin:0; }
+    table th{ position: sticky; top: 56px; background: white; }
+    footer{ margin-top:2rem; padding:1.5rem 0; border-top:1px solid var(--border-color); color:#666; font-size:.9rem; }
+    .cards{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
+    .card{ border:1px solid var(--border-color); border-radius:.6rem; padding:1rem; background: white; }
+    .card h3{ margin-top:0; }
+    .right{ text-align:right; }
+  </style>
 </head>
 <body>
 <header>
-  <h1>App Inmobiliaria</h1>
-  <nav>
-    <a href="{% url 'portada:home' %}">Portada</a>
-    <a href="/inmuebles/">Inmuebles</a>
-
-    {% if user.is_authenticated %}
-     <a href="/accounts/logout/">Salir</a>
-    {% else %}
-     <a href="/accounts/login/">Entrar</a>
-    {% endif %}
-  </nav>
+  <div class="container">
+    <div class="toolbar">
+      <h1 style="margin:.6rem 0;">Gestor Inmobiliario</h1>
+      <nav>
+        <a href="{% url 'portada:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Portada</a>
+        <a href="/inmuebles/" class="{% if request.path|slice:":11" == "/inmuebles" %}active{% endif %}">Inmuebles</a>
+        <a href="/pagos/" class="{% if request.path|slice:":7" == "/pagos/" %}active{% endif %}">Pagos</a>
+        {% if user.is_authenticated %}
+          <a href="/admin/">Admin</a>
+          <a href="/accounts/logout/">Salir</a>
+        {% else %}
+          <a href="/accounts/login/">Entrar</a>
+        {% endif %}
+      </nav>
+    </div>
+  </div>
 </header>
-<main>
+<main class="container">
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li class="pill {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
   {% block content %}{% endblock %}
 </main>
+<footer class="container">
+  <div class="right">&copy; {% now "Y" %} Gestor Inmobiliario</div>
+</footer>
 </body>
 </html>

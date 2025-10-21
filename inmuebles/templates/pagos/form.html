@@ -1,8 +1,8 @@
 {% extends "portada/base.html" %}
-{% block title %}Inmueble{% endblock %}
+{% block title %}Pago{% endblock %}
 {% block content %}
 <section class="card">
-  <h2>{{ view.object|default_if_none:"Nuevo inmueble" }}</h2>
+  <h2>{% if view.object %}Editar pago{% else %}Nuevo pago{% endif %}</h2>
   <form method="post">
     {% csrf_token %}
     <div style="display:grid; grid-template-columns: repeat(2, minmax(240px,1fr)); gap: 1rem;">
@@ -10,7 +10,7 @@
     </div>
     <p>
       <button type="submit">Guardar</button>
-      <a class="button" href="{% url 'inmuebles:lista' %}">Cancelar</a>
+      <a class="button" href="{% url 'pagos:lista' %}">Cancelar</a>
     </p>
   </form>
 </section>

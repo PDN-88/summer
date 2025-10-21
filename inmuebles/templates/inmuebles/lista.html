@@ -2,66 +2,82 @@
 {% block title %}Inmuebles{% endblock %}
 {% block content %}
 
-<h2>Inmuebles</h2>
-
-<p>
-  {% if perms.portada.add_inmueble %}
-    <a class="button" href="{% url 'inmuebles:nuevo' %}">+ Nuevo</a>
-  {% endif %}
-</p>
-
-<form method="get" style="display:grid; grid-template-columns: repeat(6, minmax(160px,1fr)); gap:.6rem; align-items:end; margin-bottom:1rem;">
-  <label>Dirección
-    <input type="text" name="q" value="{{ q }}">
-  </label>
-
-  <label>Tipo
-    <select name="tipo">
-      <option value="">(Todos)</option>
-      {% for value,label in TIPO_CHOICES %}
-        <option value="{{ value }}" {% if tipo == value %}selected{% endif %}>{{ label }}</option>
-      {% endfor %}
-    </select>
-  </label>
-
-  <label>Propietario
-    <input type="text" name="prop" value="{{ prop }}" placeholder="Nombre propietario">
-  </label>
-
-  <label>Planta
-    <input type="text" name="planta" value="{{ planta }}" placeholder="1, B, Ent...">
-  </label>
-
-  <label>m² (min)
-    <input type="number" step="0.01" name="m2_min" value="{{ m2_min }}">
-  </label>
-  <label>m² (max)
-    <input type="number" step="0.01" name="m2_max" value="{{ m2_max }}">
-  </label>
-
-  <label>Habitaciones (min)
-    <input type="number" name="hab_min" value="{{ hab_min }}">
-  </label>
-  <label>Habitaciones (max)
-    <input type="number" name="hab_max" value="{{ hab_max }}">
-  </label>
-
-  <label>Orden
-    <select name="orden">
-      <option value="-direccion"      {% if orden == '-direccion' %}selected{% endif %}>Dirección ↓</option>
-      <option value="direccion"       {% if orden == 'direccion'  %}selected{% endif %}>Dirección ↑</option>
-      <option value="-metros"         {% if orden == '-metros'    %}selected{% endif %}>Metros ↓</option>
-      <option value="metros"          {% if orden == 'metros'     %}selected{% endif %}>Metros ↑</option>
-      <option value="-habitaciones"   {% if orden == '-habitaciones' %}selected{% endif %}>Habitaciones ↓</option>
-      <option value="habitaciones"    {% if orden == 'habitaciones'  %}selected{% endif %}>Habitaciones ↑</option>
-    </select>
-  </label>
-
+<div class="toolbar">
+  <h2 style="margin: .5rem 0;">Inmuebles</h2>
   <div>
-    <button type="submit">Filtrar</button>
-    <a class="button" href="{% url 'inmuebles:lista' %}">Limpiar</a>
+    {% if perms.portada.add_inmueble %}
+      <a class="button" href="{% url 'inmuebles:nuevo' %}">+ Nuevo inmueble</a>
+    {% endif %}
   </div>
-</form>
+</div>
+
+<section class="filters" style="margin: .8rem 0 1rem;">
+  <details {% if q or tipo or prop or planta or m2_min or m2_max or hab_min or hab_max or alquilado %}open{% endif %}>
+    <summary>Filtros avanzados</summary>
+    <form method="get" style="display:grid; grid-template-columns: repeat(6, minmax(160px,1fr)); gap:.6rem; align-items:end; margin-top: .6rem;">
+      <label>Dirección
+        <input type="text" name="q" value="{{ q }}">
+      </label>
+
+      <label>Tipo
+        <select name="tipo">
+          <option value="">(Todos)</option>
+          {% for value,label in TIPO_CHOICES %}
+            <option value="{{ value }}" {% if tipo == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>Propietario
+        <input type="text" name="prop" value="{{ prop }}" placeholder="Nombre propietario">
+      </label>
+
+      <label>Alquilado
+        <select name="alquilado">
+          <option value="">(Todos)</option>
+          <option value="si" {% if alquilado == 'si' %}selected{% endif %}>Sí</option>
+          <option value="no" {% if alquilado == 'no' %}selected{% endif %}>No</option>
+        </select>
+      </label>
+
+      <label>Planta
+        <input type="text" name="planta" value="{{ planta }}" placeholder="1, B, Ent...">
+      </label>
+
+      <label>m² (min)
+        <input type="number" step="0.01" name="m2_min" value="{{ m2_min }}">
+      </label>
+      <label>m² (max)
+        <input type="number" step="0.01" name="m2_max" value="{{ m2_max }}">
+      </label>
+
+      <label>Habitaciones (min)
+        <input type="number" name="hab_min" value="{{ hab_min }}">
+      </label>
+      <label>Habitaciones (max)
+        <input type="number" name="hab_max" value="{{ hab_max }}">
+      </label>
+
+      <label>Orden
+        <select name="orden">
+          <option value="-direccion"      {% if orden == '-direccion' %}selected{% endif %}>Dirección ↓</option>
+          <option value="direccion"       {% if orden == 'direccion'  %}selected{% endif %}>Dirección ↑</option>
+          <option value="-metros"         {% if orden == '-metros'    %}selected{% endif %}>Metros ↓</option>
+          <option value="metros"          {% if orden == 'metros'     %}selected{% endif %}>Metros ↑</option>
+          <option value="-habitaciones"   {% if orden == '-habitaciones' %}selected{% endif %}>Habitaciones ↓</option>
+          <option value="habitaciones"    {% if orden == 'habitaciones'  %}selected{% endif %}>Habitaciones ↑</option>
+        </select>
+      </label>
+
+      <div>
+        <button type="submit">Aplicar filtros</button>
+        <a class="button" href="{% url 'inmuebles:lista' %}">Limpiar</a>
+      </div>
+    </form>
+  </details>
+</section>
+
+<p><strong>{{ page_obj.paginator.count }}</strong> inmueble(s) encontrados.</p>
 
 <table>
   <thead>
@@ -73,6 +89,7 @@
       <th>Puerta</th>
       <th>m²</th>
       <th>Hab.</th>
+      <th>Alquilado</th>
       <th>Propietario</th>
       <th>Acciones</th>
     </tr>
@@ -81,25 +98,27 @@
     {% for i in object_list %}
     <tr>
       <td>{{ i.id }}</td>
-      <td><span style="display:inline-block; padding:.2rem .5rem; border-radius:.5rem; background:#eee; font-size:.85rem;">{{ i.get_tipo_display }}</span></td>
+      <td><span class="pill">{{ i.get_tipo_display }}</span></td>
       <td>{{ i.direccion }}</td>
       <td>{{ i.planta|default:"—" }}</td>
       <td>{{ i.puerta|default:"—" }}</td>
       <td>{{ i.metros }}</td>
       <td>{{ i.habitaciones|default:"—" }}</td>
+      <td>{% if i.alquilado %}<span class="pill green">Sí</span>{% else %}<span class="pill red">No</span>{% endif %}</td>
       <td>{{ i.propietario }}</td>
       <td>
-        {% if perms.portada.change_inmueble %}
-          <a href="{% url 'inmuebles:editar' i.id %}">Editar</a>
-        {% endif %}
-        {% if perms.portada.delete_inmueble %}
-          {% if perms.portada.change_inmueble %} | {% endif %}
-          <a href="{% url 'inmuebles:borrar' i.id %}">Borrar</a>
-        {% endif %}
+        <a href="{% url 'pagos:lista' %}?inmueble={{ i.id }}">Pagos</a>
+        {% if perms.portada.change_inmueble %} | <a href="{% url 'inmuebles:editar' i.id %}">Editar</a>{% endif %}
+        {% if perms.portada.delete_inmueble %} | <a href="{% url 'inmuebles:borrar' i.id %}">Borrar</a>{% endif %}
       </td>
     </tr>
     {% empty %}
-    <tr><td colspan="9">Sin resultados</td></tr>
+    <tr><td colspan="10">
+      <div class="card">
+        <h3>Sin resultados</h3>
+        <p>No hay inmuebles que coincidan con los filtros. Prueba a limpiar la búsqueda.</p>
+      </div>
+    </td></tr>
     {% endfor %}
   </tbody>
 </table>
